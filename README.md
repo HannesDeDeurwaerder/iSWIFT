@@ -49,10 +49,9 @@ iSWIFT has no other dependencies other than the base R installation.
 The code below defines a simple example of the use of the iSWIFT model, based on
 the case study example provided in **De Deurwaerder et al,(In Review)**. 
 
-
 ### Run the iSWIFT model
 
-  # INITIALIZE LIBRARIES 
+  # Initialize libraries
   #----------------------
   require(SWIFT)
   require(lhs)
