@@ -52,74 +52,78 @@ the case study example provided in the paper of **De Deurwaerder et al, (In Revi
 
 ### Run the SWIFT model
 
-  # Initialize of Libraries -------------------------------------------------
-  require('SWIFT')
-  require('lhs')
-  require('GenSA')
-  require('sm')
-  require('ks')
-  require('sn')
+  # Initialize of Libraries 
+  #------------------------
+    require('SWIFT')
+    require('lhs')
+    require('GenSA')
+    require('sm')
+    require('ks')
+    require('sn')
   
-  # Load associated Datasets ------------------------------------------------
-  data(Laussat_SoilWaterIsotopes)  # soil water isotope composition 
-  #[in permil, V-SMOW]
-  data(Laussat_SoilWaterPotential) # soil water potential [in MPa]
-  data(SapfluxData)  # sap flux density data [in kg m-2 s-1]
-  data(DataLaussat) # Xylem water isotope composition [in perMil, V-SMOW]
+  # Load associated Datasets 
+  #-------------------------
+    data(Laussat_SoilWaterIsotopes)   # soil water isotope composition 
+                                      #[in permil, V-SMOW]
+    data(Laussat_SoilWaterPotential)  # soil water potential [in MPa]
+    data(SapfluxData)   # sap flux density data [in kg m-2 s-1]
+    data(DataLaussat)   # Xylem water isotope composition [in perMil, V-SMOW]
+    
+  # Initialize global parameters 
+  #-----------------------------
+  n   <<- 20            # Multiple number of days studied, needed for spin up
+                        # of the model.
+  tF  <<- 60            # Time frequency of measurements per hour                                    # [in measurments per h].
+  tt  <<- seq(0,24*n,length.out = 24*tF*n)     # Discrete time vector [in h].
+  dZ  <<- 0.001         # Thickness of sampled layer [in m].
+  L   <<- 1             # maximum soil depth [in m].
+  Z   <<- seq(dZ,L,dZ)  # Discrete depth vector centered [in m].
+  PSIsat <<- -0.153     # Water potential at soil saturation for clay Sand 
+                        # soil, [in m H2O](obtained from Clapp and Hornberger
+                        # (1978))
+  D2Hoffset <<- 6.855   # deuterium offset (calculated from 'DataLaussat')
+  Bbeta <<- 0.962       # allocation parameter  that gives the distribution 
+                        # of absorbing root surface area of the entire plant 
+                        # community. Typical value for Tropical evergreen 
+                        # forest obtained from Jackson et al (1996)
+  Ltot <<- 10000        # Absorbing root area length Soethe et al (2006)
+  BR0 <<- (Ltot*100)/(1-Bbeta^100)
+  betaCom <<- Bprep(Bbeta, BR0, Z)  # Absorbing root length distribution of 
+                                    # the entire plant community
   
-  # Initialize global parameters --------------------------------------------
-      n   <<- 20            # Multiple number of days studied, needed for spin up 
-      # of the model.
-      tF  <<- 60            # Time frequency of measurements per hour 
-                            # [in measurments per h].
-      tt  <<- seq(0,24*n,length.out = 24*tF*n)     # Discrete time vector [in h].
-      dZ  <<- 0.001         # Thickness of sampled layer [in m].
-      L   <<- 1             # maximum soil depth [in m].
-      Z   <<- seq(dZ,L,dZ)  # Discrete depth vector centered [in m].
-      PSIsat <<- -0.153     # Water potential at soil saturation for clay Sand 
-                            # soil, [in m H2O](obtained from Clapp and Hornberger
-                            # (1978))
-      D2Hoffset <<- 6.855   # deuterium offset (calculated from 'DataLaussat')
-      Bbeta <<- 0.962       # allocation parameter  that gives the distribution 
-                            # of absorbing root surface area of the entire plant 
-                            # community. Typical value for Tropical evergreen 
-                            # forest obtained from Jackson et al (1996)
-      Ltot <<- 10000        # Absorbing root area length Soethe et al (2006)
-      BR0 <<- (Ltot*100)/(1-Bbeta^100)
-      betaCom <<- Bprep(Bbeta, BR0, Z)  # Absorbing root length distribution of 
-                                        # the entire plant community
+  # Unit conversion factors 
+  #--------------------------------------------------------------------------
+  CTpsi <<- 101.97      # Conversion factor between MPa and m H2O
+  TCOR <<- 24*60*(n-2)  # time correction needed IN THIS EXAMPLE to account 
+                        # for spin-up of the model
+  cm2_to_m2 <<- 1/10000 # conversion from cm2 to m2!!
   
-  # Unit conversion factors -------------------------------------------------
-      CTpsi <<- 101.97      # Conversion factor between MPa and m H2O
-      TCOR <<- 24*60*(n-2)  # time correction needed IN THIS EXAMPLE to account 
-                            # for spin-up of the model
-      cm2_to_m2 <<- 1/10000 # conversion from cm2 to m2!!
-  
-  # Growth form specific restriction schemes --------------------------------
-      # Liana restriction scheme - here in function format, declaring globally 
-      LianaVariableRanges<- function(){
-          DBHrange <<- c(0.63, 17.51)*10^-2 # DBH [in m] 
-                                            # (range obtained from 'DataLaussat')
-          LArange <<- c(0.14, 0.21)   # Lumen area fraction of sapwood [in m2 m-2]
-          Asaprange <<- c(0.5,1.5)    # Sapwood area variability term 'a', see De 
-                                      # Deurwaerder et al (2021) Table S2
-          Krrange <<- c(1,14)*10^-10  # kr, the effective root radial conductivity
-                                      # [in s-1]
-          SFdailyrange <<- c(0.5,1.5) # Daily sapflow variability term 'a', see De 
-                                      # Deurwaerder et al (2021) Table S2
-          Hosrange <<- c(0,25)        # Sampling height [in m]
-          tstudrange <<- c(9,14)*tF   # Timing of sampling
-          relSF <<- rep(SapFlow/sum(SapFlow),n) # generic relative SF data 
-                                                # repeated over 20 days
-          # Growth form specific total absorbing root area calculation function
-              ARcalc <<- function(DBH){
-              #function parameters, see De Deurwaerder et al (2021)[Table S2]
-                  Mrl = 0.01; SRA = 40.94746;  cc = -7.094; dd = 1.690 #
-                  return(Mrl*SRA*exp(cc+dd*log(DBH*10^3)))}
-      }
+  # Growth form specific restriction schemes 
+  #--------------------------------------------------------------------------
+  # Liana restriction scheme - here in function format, declaring globally 
+    LianaVariableRanges<- function(){
+    DBHrange <<- c(0.63, 17.51)*10^-2 # DBH [in m] 
+                                      # (range obtained from 'DataLaussat')
+    LArange <<- c(0.14, 0.21)   # Lumen area fraction of sapwood [in m2 m-2]
+    Asaprange <<- c(0.5,1.5)    # Sapwood area variability term 'a', see De 
+                                # Deurwaerder et al (2021) Table S2
+    Krrange <<- c(1,14)*10^-10  # kr, the effective root radial conductivity
+                                # [in s-1]
+    SFdailyrange <<- c(0.5,1.5) # Daily sapflow variability term 'a', see De 
+                                  # Deurwaerder et al (2021) Table S2
+    Hosrange <<- c(0,25)        # Sampling height [in m]
+    tstudrange <<- c(9,14)*tF   # Timing of sampling
+    relSF <<- rep(SapFlow/sum(SapFlow),n) # generic relative SF data 
+                                          # repeated over 20 days
+    # Growth form specific total absorbing root area calculation function
+    ARcalc <<- function(DBH){
+      #function parameters, see De Deurwaerder et al (2021)[Table S2]
+      Mrl = 0.01; SRA = 40.94746;  cc = -7.094; dd = 1.690 #
+      return(Mrl*SRA*exp(cc+dd*log(DBH*10^3)))}
+    }
   # Tree restriction scheme - here in function format, declaring globally 
-      TreeVariableRanges<- function(){
-          DBHrange <<- c(9.87, 69.39)*10^-2 # DBH [in m] 
+    TreeVariableRanges<- function(){
+    DBHrange <<- c(9.87, 69.39)*10^-2 # DBH [in m] 
                                             # (range obtained from 'DataLaussat')
           LArange <<- c(0.19,0.41)    # Lumen area fraction of sapwood [in m2 m-2]
           Asaprange <<- c(0.5,1.5)    # Sapwood area variability term 'a', see De 
