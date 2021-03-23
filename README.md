@@ -50,24 +50,24 @@ The code below defines a simple example of the use of the iSWIFT model, based on
 the case study example provided in the paper of **De Deurwaerder et al, (In Review)** <Link will be added upon acceptance>
 
 
-### Run the SWIFT model
+### Run the iSWIFT model
 
-  # Initialize of Libraries 
+  # Initialize Libraries 
   #------------------------
-    require('SWIFT')
-    require('lhs')
-    require('GenSA')
-    require('sm')
-    require('ks')
-    require('sn')
+  require('SWIFT')
+  require('lhs')
+  require('GenSA')
+  require('sm')
+  require('ks')
+  require('sn')
   
   # Load associated Datasets 
   #-------------------------
-    data(Laussat_SoilWaterIsotopes)   # soil water isotope composition 
+  data(Laussat_SoilWaterIsotopes) # soil water isotope composition 
                                       #[in permil, V-SMOW]
-    data(Laussat_SoilWaterPotential)  # soil water potential [in MPa]
-    data(SapfluxData)   # sap flux density data [in kg m-2 s-1]
-    data(DataLaussat)   # Xylem water isotope composition [in perMil, V-SMOW]
+  data(Laussat_SoilWaterPotential)  # soil water potential [in MPa]
+  data(SapfluxData)   # sap flux density data [in kg m-2 s-1]
+  data(DataLaussat)   # Xylem water isotope composition [in perMil, V-SMOW]
     
   # Initialize global parameters 
   #-----------------------------
@@ -92,15 +92,16 @@ the case study example provided in the paper of **De Deurwaerder et al, (In Revi
                                     # the entire plant community
   
   # Unit conversion factors 
-  #--------------------------------------------------------------------------
+  #------------------------
   CTpsi <<- 101.97      # Conversion factor between MPa and m H2O
   TCOR <<- 24*60*(n-2)  # time correction needed IN THIS EXAMPLE to account 
                         # for spin-up of the model
   cm2_to_m2 <<- 1/10000 # conversion from cm2 to m2!!
   
   # Growth form specific restriction schemes 
-  #--------------------------------------------------------------------------
-  # Liana restriction scheme - here in function format, declaring globally 
+  #-----------------------------------------
+    
+    # Liana restriction scheme - here in function format, declaring globally 
     LianaVariableRanges<- function(){
     DBHrange <<- c(0.63, 17.51)*10^-2 # DBH [in m] 
                                       # (range obtained from 'DataLaussat')
@@ -115,13 +116,14 @@ the case study example provided in the paper of **De Deurwaerder et al, (In Revi
     tstudrange <<- c(9,14)*tF   # Timing of sampling
     relSF <<- rep(SapFlow/sum(SapFlow),n) # generic relative SF data 
                                           # repeated over 20 days
-    # Growth form specific total absorbing root area calculation function
-    ARcalc <<- function(DBH){
-      #function parameters, see De Deurwaerder et al (2021)[Table S2]
-      Mrl = 0.01; SRA = 40.94746;  cc = -7.094; dd = 1.690 #
-      return(Mrl*SRA*exp(cc+dd*log(DBH*10^3)))}
+      # Growth form specific total absorbing root area calculation function
+      ARcalc <<- function(DBH){
+        #function parameters, see De Deurwaerder et al (2021)[Table S2]
+        Mrl = 0.01; SRA = 40.94746;  cc = -7.094; dd = 1.690 #
+        return(Mrl*SRA*exp(cc+dd*log(DBH*10^3)))}
     }
-  # Tree restriction scheme - here in function format, declaring globally 
+    
+    # Tree restriction scheme - here in function format, declaring globally 
     TreeVariableRanges<- function(){
     DBHrange <<- c(9.87, 69.39)*10^-2 # DBH [in m] 
                                             # (range obtained from 'DataLaussat')
@@ -136,12 +138,13 @@ the case study example provided in the paper of **De Deurwaerder et al, (In Revi
           tstudrange <<- c(9,14)*tF   # Timing of sampling 
           relSF <<- rep(SapFlow/sum(SapFlow),n) # generic relative SF data 
                                                 # repeated over 20 days
-          # Growth form specific total absorbing root area calculation function
-              ARcalc <<- function(DBH){
-                  return(exp(0.88*log(pi*(DBH*100/2)^2)-2))}
+            # Growth form specific total absorbing root area calculation function
+            ARcalc <<- function(DBH){
+              return(exp(0.88*log(pi*(DBH*100/2)^2)-2))}
       }
     
-    # Scenario details -----------------------------------------------------
+    # Scenario details 
+    #-----------------
         ConsideredIsotopes <<- 'Dual'   
                 # which isotope studied:'D2H','D18O','Dual'
         SoilWaterPotential <<- Laussat_SoilWaterPotential 
@@ -152,17 +155,19 @@ the case study example provided in the paper of **De Deurwaerder et al, (In Revi
         LMWLslope <<- 7.748      # Local Meteoric water line slope in Laussat
         LMWLintercept <<- 4.930  # Local Meteoric water line intercepth in Laussat 
         
-    # Field data to be evaluated --------------------------------------------
-        FD <<- DataLaussat # measured isotope data in Laussat
+    # Field data to be evaluated 
+    #---------------------------
+        FD <<- DataLaussat       # measured isotope data in Laussat
         FD$D2H <- FD$D2H + D2Hoffset   # remove D2Hoffset
         FD_L <- data.frame(D2H=FD$D2H[which(FD$GF=='L')],
                            D18O=FD$D18O[which(FD$GF=='L')])
         FD_T <- data.frame(D2H=FD$D2H[which(FD$GF=='T')],
                            D18O=FD$D18O[which(FD$GF=='T')])
     
-    # Run iSWIFT per growth form --------------------------------------------
+    # Run iSWIFT per growth form 
+    #---------------------------
         # run for 'LIANAS'
-            FieldData <<- FD_L      # Allocate field data of lianas
+            FieldData <<- FD_L                # Allocate field data of lianas
             SapFlow <<- SapfluxData$Liana     # growth form specific sapflow 
                                               # rates normalized per sapwood area
                                               # Chen et al.(2017)[Fig 5b] 
@@ -173,18 +178,19 @@ the case study example provided in the paper of **De Deurwaerder et al, (In Revi
             Csyn_L<-CDPD(beta.i=Beta.hat_L$par) # SWIFT generated output for best 
                                                 # beta estimate
         # run for 'TREES'
-            FieldData <<- FD_T      # Allocate field data of trees
+            FieldData <<- FD_T            # Allocate field data of trees
             SapFlow <<- SapfluxData$Tree  # growth form specific sapflow 
                                           # rates normalized per sapwood area
                                           # Chen et al.(2017)[Fig 5b] 
                                           # [in kg m-2 s-1]
-            TreeVariableRanges()  # load growth form specific info
+            TreeVariableRanges()          # load growth form specific info
             Beta.hat_T<-optim(0.95, fn=LogLikOptim, lower = 0.8, upper = 0.995, 
                       method = "Brent")
             Csyn_T<-CDPD(beta.i=Beta.hat_T$par)  # SWIFT generated output for best 
                                                  # beta estimate
     
-    # Making a simple plot of the field data and iSWIFT output --------------
+    # Making a simple plot of the field data and iSWIFT output 
+    #----------------------------------------------------------
             xlabel=expression(paste(delta,""^18,"O [","\211",", V-SMOW]"))
             ylabel=expression(paste(delta,""^2,"H [","\211",", V-SMOW]"))
       # Plot Laussat field data
