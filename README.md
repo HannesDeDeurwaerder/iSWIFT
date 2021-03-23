@@ -54,17 +54,17 @@ the case study example provided in **De Deurwaerder et al,(In Review)**.
 
   # INITIALIZE LIBRARIES 
   #----------------------
-  require('SWIFT')
-  require('lhs')
-  require('GenSA')
-  require('sm')
-  require('ks')
-  require('sn')
+  require(SWIFT)
+  require(lhs)
+  require(GenSA)
+  require(sm)
+  require(ks)
+  require(sn)
   
   # Load associated Datasets 
   #-------------------------
   data(Laussat_SoilWaterIsotopes) # soil water isotope composition 
-                                      #[in permil, V-SMOW]
+                                  #[in permil, V-SMOW]
   data(Laussat_SoilWaterPotential)  # soil water potential [in MPa]
   data(SapfluxData)   # sap flux density data [in kg m-2 s-1]
   data(DataLaussat)   # Xylem water isotope composition [in perMil, V-SMOW]
