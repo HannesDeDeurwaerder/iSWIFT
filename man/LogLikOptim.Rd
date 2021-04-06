@@ -14,14 +14,14 @@ provided with type of optimizer (here 'Brent') and user provided ranges, will
 optimize this function where a minimum log-likelyhood is sought between field 
 data and SWIFT generated synthetic field data.
 }
-\usage{ LogLikOptim(beta.i=NULL)}
+\usage{ LogLikOptim(beta.i=NULL) }
 \arguments{
   \item{beta.i}{
  Description: Allocation parameter that describes the exponential decay of the 
               distribution of absorbing root surfaces for the focal plant;
  Functionality: used in the iSWIFT loglikelihood optimization  
  Structure:   Randomly assigned numeric value within defined ranges as provided 
-              in the 'optim' function.
+              in the 'optim' function.}
 }
 \details{
 }
