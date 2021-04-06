@@ -6,14 +6,13 @@ Version: 	0.0.1
 Date: 		2021-03-18
 Author: 	Hannes P.T. De Deurwaerder, Marco D. Visser, Felicien Meunier, 
           Matteo Detto, Pedro Herve Fernandez, Pascal Boeckx and Hans Verbeeck.
-Maintainer: 	Hannes De Deurwaerder <hannes_de_deurwaerder@hotmail.com>
+Maintainer:         Hannes De Deurwaerder <hannes_de_deurwaerder@hotmail.com>
 Description: 	This package provide an inverse approach to estimate the 
               distribution of the absorbing root surface from isotope data and 
               plant hydraulic traits considered. While this methodology can be 
               applied on all models combining a mixing model approach with plant
               hydraulic models, here it is applied on the SWIFT model 
-              (De Deurwaerder et al. 2020, Biogeosciences). 
-              
+              (De Deurwaerder et al. 2020, Biogeosciences).               
               'iSWIFT' provide a set of new function, with at its core the 
               'LogLikOptim' function which optimizes the log-likelihood function
               in order to obtain the best estimate of beta (beta.hat in 
@@ -28,8 +27,7 @@ Description: 	This package provide an inverse approach to estimate the
               which conditional desity probability distribution are calculated via 
               the 'CDPD'-function, required to evaluate the log likelihood of
               field data with the SWIFT model generated data for a specific beta
-              within the 'LogLik' function.
-              
+              within the 'LogLik' function.              
               Note that since the iSWIFT package builds further on the SWIFT 
               package, it contains the same functionalities and requires the 
               same variable and parameter declarations as decribe in more detail 
