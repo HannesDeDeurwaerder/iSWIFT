@@ -14,8 +14,8 @@ individual variables and the rows the user defined number of syntehtic field
 sampples to generate.
 
 IMPORTANT: Note that for this function to properly work, all variables of the 
-SWIFT model should be declared locally or globally. 
-\usage{ VarMatrix(beta.i=NULL)}
+SWIFT model should be declared locally or globally.} 
+\usage{VarMatrix(beta.i=NULL)}
 \arguments{
   \item{beta.i}{
  Description: Allocation parameter that describes the exponential decay of the 
@@ -26,10 +26,10 @@ SWIFT model should be declared locally or globally.
 }
 \details{}
 \value{
-The function returns 
-a matrix of several SWIFT input varialbes with a column for each considered  
- variables and the rows the user defined number of syntehtic field 
-sampples to generate.
+  The function returns 
+  a matrix of several SWIFT input varialbes with a column for each considered  
+  variables and the rows the user defined number of syntehtic field 
+  sampples to generate.
 }
 \references{}
 \author{ Hannes De Deurwaerder, Marco D. Visser, Matteo Detto, Pascal Boeckx, 
