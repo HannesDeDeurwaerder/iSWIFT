@@ -95,7 +95,7 @@ Felicien Meunier, Pedro Herve Fernandez and Hans Verbeeck}
       Iso_H[ii] <- SWIFT_H( Ax, Iso_SB, BiophysVariables[ii,'hos'], SF, 
                             BiophysVariables[ii,'tstud'], tF)
       # report progress of one run
-      cat("\r","beta = ",beta.i, " | progress = ", 
+      cat("\rbeta = ",beta.i, " | progress = ", 
           format((ii/SWIFTitterations)*100,nsmall=2),"%")
     }
     return(Iso_H)
