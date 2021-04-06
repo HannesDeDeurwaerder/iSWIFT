@@ -56,7 +56,7 @@ SWIFT model should be declared locally or globally.
               per planned SWIFT run, rows correspond to the discritized soil 
               layers each individual SWIFT run planned;
  Creation:    Via 'SoilHeterogeneity' function}  
-
+}
 \details{}
 \value{
     Returning values are SWIFT generated xylem water istopic composition, i.e., 
