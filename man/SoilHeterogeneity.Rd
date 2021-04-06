@@ -22,8 +22,8 @@ structure
               soil profile is required; options are:'PSI' for soil water 
               potential profiles with detphs,'D2H' or 'D18O' when soil water
               isotope composition profiles are targetted}
-\details{
 }
+\details{}
 \value{
 Returning a matrix containing user defined number of soil water potential or isotope composition profiles, where every column represent a distinct profile, and the rows correspond to the discritized soil layers}
 \references{}
