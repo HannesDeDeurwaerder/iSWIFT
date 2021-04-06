@@ -57,48 +57,47 @@ SWIFT model should be declared locally or globally.
               layers each individual SWIFT run planned;
  Creation:    Via 'SoilHeterogeneity' function}  
 
-\details{
-}
+\details{}
 \value{
-Returning values are SWIFT generated xylem water istopic composition, i.e., 
-D2H and/or D18O. Hence providing synthetic field data corresponding the input
-provided by the reader, but without consideration of potential extraction error}
+    Returning values are SWIFT generated xylem water istopic composition, i.e., 
+    D2H and/or D18O. Hence providing synthetic field data corresponding the input
+    provided by the reader, but without consideration of potential extraction error}
 \references{}
 \author{ Hannes De Deurwaerder, Marco D. Visser, Matteo Detto, Pascal Boeckx, 
 Felicien Meunier, Pedro Herve Fernandez and Hans Verbeeck}
 \note{}
 \seealso{}
 \examples{
-ProbabilitySpace <- function(beta.i, BiophysVariables, PSIprofiles, 
-                             soilDeuterium, soilOxygen){
-    #--------------------------------------------------------------------#
-    # NOTE that for this function to properly work, all variables of the #
-    # SWIFT model should be declared locally or globally.                #
-    #--------------------------------------------------------------------#
+  ProbabilitySpace <- function(beta.i, BiophysVariables, PSIprofiles, 
+                               soilDeuterium, soilOxygen){
+      #--------------------------------------------------------------------#
+      # NOTE that for this function to properly work, all variables of the #
+      # SWIFT model should be declared locally or globally.                #
+      #--------------------------------------------------------------------#
 
-  Iso_H <- rep(NA, SWIFTitterations )   # decalre empty vector of isotopic data
+    Iso_H <- rep(NA, SWIFTitterations)   # decalre empty vector of isotopic data
 
-  # which isotope is considered
-  if(ConsideredIsotopes=='D2H'){Isotopes <- soilDeuterium}  # deuterium
-  if(ConsideredIsotopes!='D2H'){Isotopes <- soilOxygen} 
-                                  # oxygen or dual using the LMWL approach
-  for (ii in 1:SWIFTitterations){
-    Ax <- BiophysVariables[ii,'LA']*BiophysVariables[ii,'Asapwood'] # lumen area
-    SF <- relSF*BiophysVariables[ii,'SFdaily']* 3600/tF 
-                                      # Sapflow in m3/time-frequency considered
-    k  <- SoilRootCond(betaCom, BiophysVariables[ii,'Kr'], PSIprofiles[,ii], 
-                       Z, 'Sandy Clay') # Total soil to root conductivity
-    tmp <- beta.i^(100*Z)*(1-beta.i^(100*dZ))
-    ARi <- BiophysVariables[ii,'ARtot']*tmp/sum(tmp) # root area distribution
+    # which isotope is considered
+    if(ConsideredIsotopes=='D2H'){Isotopes <- soilDeuterium}  # deuterium
+    if(ConsideredIsotopes!='D2H'){Isotopes <- soilOxygen} 
+                                    # oxygen or dual using the LMWL approach
+    for (ii in 1:SWIFTitterations){
+      Ax <- BiophysVariables[ii,'LA']*BiophysVariables[ii,'Asapwood'] # lumen area
+      SF <- relSF*BiophysVariables[ii,'SFdaily']* 3600/tF 
+                                        # Sapflow in m3/time-frequency considered
+      k  <- SoilRootCond(betaCom, BiophysVariables[ii,'Kr'], PSIprofiles[,ii], 
+                         Z, 'Sandy Clay') # Total soil to root conductivity
+      tmp <- beta.i^(100*Z)*(1-beta.i^(100*dZ))
+      ARi <- BiophysVariables[ii,'ARtot']*tmp/sum(tmp) # root area distribution
 
-    # run SWIFT for stem base and sampling at specific height    
-    Iso_SB <- SWIFT_SB(ARi, Isotopes[,ii], k, PSIprofiles[,ii], SF, tt, Z)
-    Iso_H[ii] <- SWIFT_H( Ax, Iso_SB, BiophysVariables[ii,'hos'], SF, 
-                          BiophysVariables[ii,'tstud'], tF)
-    # report progress of one run
-    cat("\r","beta = ",beta.i, " | progress = ", 
-        format((ii/SWIFTitterations)*100,nsmall=2),"%")
-  }
-  return(Iso_H)
-}
+      # run SWIFT for stem base and sampling at specific height    
+      Iso_SB <- SWIFT_SB(ARi, Isotopes[,ii], k, PSIprofiles[,ii], SF, tt, Z)
+      Iso_H[ii] <- SWIFT_H( Ax, Iso_SB, BiophysVariables[ii,'hos'], SF, 
+                            BiophysVariables[ii,'tstud'], tF)
+      # report progress of one run
+      cat("\r","beta = ",beta.i, " | progress = ", 
+          format((ii/SWIFTitterations)*100,nsmall=2),"%")
+    }
+    return(Iso_H)
+   }
 }
