@@ -18,10 +18,9 @@ SWIFT model should be declared locally or globally.
               distribution of absorbing root surfaces for the focal plant;
  Functionality: used in the iSWIFT loglikelihood optimization  
  Structure:   Randomly assigned numeric value within defined ranges as provided 
-              in the 'optim' function.
+              in the 'optim' function.}
 }
-\details{
-}
+\details{}
 \value{
 This function will create a matrix of synthetic field data of xylem water isotope 
 compositions (D2H and/or D18O)(number of synthetic field data points are user 
