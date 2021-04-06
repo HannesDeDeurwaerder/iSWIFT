@@ -22,10 +22,9 @@ SWIFT model should be declared locally or globally.
               distribution of absorbing root surfaces for the focal plant;
  Functionality: used in the iSWIFT loglikelihood optimization  
  Structure:   Randomly assigned numeric value within defined ranges as provided 
-              in the 'optim' function.
+              in the 'optim' function.}
 }
-\details{
-}
+\details{}
 \value{
 The function returns 
 a matrix of several SWIFT input varialbes with a column for each considered  
